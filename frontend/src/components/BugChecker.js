@@ -7,19 +7,28 @@ export default function BugChecker() {
 
   const handleCheck = async () => {
     try {
-      const response = await fetch("/api/bug/predict", {
+      const response = await fetch("http://localhost:5000/upload-single", { // or your endpoint
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, name: "Snippet.js" }),
       });
 
       const data = await response.json();
-      setResult(data.result);
 
-      if (data.result.includes("Bug")) {
-        setErrorLog((prev) => [...prev, `⚠️ Possible issue in your code snippet`]);
+      if (data.errors) {
+        if (data.errors.length === 0) {
+          setResult("No Bugs ✅");
+          setErrorLog(["✅ No errors found"]);
+        } else {
+          setResult("Bug(s) Found ❌");
+          const logs = data.errors.map(
+            (err) => `Line ${err.line}, Col ${err.column}: ${err.message} (${err.ruleId})`
+          );
+          setErrorLog(logs);
+        }
       } else {
-        setErrorLog(["✅ No errors found"]);
+        setResult("Prediction failed ⚠️");
+        setErrorLog(["⚠️ ESLint could not parse the code"]);
       }
     } catch (err) {
       setResult("❌ Error connecting to server");
@@ -29,14 +38,9 @@ export default function BugChecker() {
 
   return (
     <div style={{ 
-      display: "flex", 
-      flexDirection: "column", 
-      gap: "20px", 
-      maxWidth: "800px", 
-      margin: "50px auto", 
-      padding: "30px", 
-      borderRadius: "16px", 
-      background: "linear-gradient(135deg, #f9f9f9, #ececec)", 
+      display: "flex", flexDirection: "column", gap: "20px", 
+      maxWidth: "800px", margin: "50px auto", padding: "30px", 
+      borderRadius: "16px", background: "linear-gradient(135deg, #f9f9f9, #ececec)", 
       boxShadow: "0px 6px 15px rgba(0,0,0,0.1)" 
     }}>
       <h2 style={{ textAlign: "center", color: "#333" }}>🔍 AI Bug Detector</h2>
@@ -93,7 +97,7 @@ export default function BugChecker() {
         {errorLog.length > 0 ? (
           <ul>
             {errorLog.map((err, i) => (
-              <li key={i} style={{ color: err.includes("⚠️") ? "red" : "green" }}>{err}</li>
+              <li key={i} style={{ color: err.includes("❌") || err.includes("⚠️") ? "red" : "green" }}>{err}</li>
             ))}
           </ul>
         ) : (
