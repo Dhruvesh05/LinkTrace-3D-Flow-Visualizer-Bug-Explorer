@@ -2,7 +2,7 @@
 import React from "react";
 
 export default function ErrorSection({ data }) {
-  if (!data || !data.files) 
+  if (!data || !data.files || data.files.length === 0) 
     return <p style={{ color: "red" }}>⚠ No bug data available</p>;
 
   const hasBug = data.files.some(f => f.errors.length > 0);

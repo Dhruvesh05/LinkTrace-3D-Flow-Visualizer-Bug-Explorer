@@ -7,13 +7,44 @@ import { useState, useEffect } from 'react';
 function AboutSection() {
   const [activeFeature, setActiveFeature] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [activeNav, setActiveNav] = useState('about');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleNavClick = (id) => {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    setActiveNav(id);
+    setIsMenuOpen(false);
+  };
 
   useEffect(() => {
     setIsVisible(true);
     const interval = setInterval(() => {
       setActiveFeature(prev => (prev + 1) % 3);
     }, 4000);
-    return () => clearInterval(interval);
+
+    const handleScroll = () => {
+      const sections = document.querySelectorAll('.section');
+      const scrollPosition = window.scrollY + window.innerHeight / 2;
+
+      sections.forEach(section => {
+        const top = section.offsetTop;
+        const height = section.offsetHeight;
+        
+        if (scrollPosition >= top && scrollPosition < top + height) {
+          setActiveNav(section.id);
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const features = [
@@ -45,8 +76,60 @@ function AboutSection() {
     { name: "React", color: "bg-blue-500 text-white" }
   ];
 
+  const navItems = [
+    { id: 'about', label: 'About' },
+    { id: 'mission', label: 'Mission' },
+    { id: 'features', label: 'Features' },
+    { id: 'tech', label: 'Tech Stack' }
+  ];
+
   return (
     <div className="about-wrapper">
+      {/* Navigation */}
+      <nav className="navbar">
+        <div className="container">
+          <div className="nav-items">
+            {navItems.map(item => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={`nav-link ${activeNav === item.id ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(item.id);
+                }}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+          
+          {/* Hamburger Menu */}
+          <div className="hamburger" onClick={toggleMenu}>
+            <span style={{ transform: isMenuOpen ? 'rotate(45deg) translate(6px, 6px)' : 'none' }}></span>
+            <span style={{ opacity: isMenuOpen ? '0' : '1' }}></span>
+            <span style={{ transform: isMenuOpen ? 'rotate(-45deg) translate(6px, -6px)' : 'none' }}></span>
+          </div>
+
+          {/* Mobile Menu */}
+          <div className={`nav-menu-mobile ${isMenuOpen ? 'active' : ''}`}>
+            {navItems.map(item => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={`nav-link ${activeNav === item.id ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(item.id);
+                }}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </nav>
+
       {/* Blobs and particles */}
       <div className="background-effects">
         <div className="blob blob-top-right"></div>
@@ -61,14 +144,14 @@ function AboutSection() {
       <div className="content">
         <div className="container">
           {/* Header */}
-          <div className={`section ${isVisible ? 'fade-in' : 'hidden'}`}>
+          <div id="about" className={`section ${isVisible ? 'fade-in' : 'hidden'}`}>
             <div className="tagline">
               <h1><span className="emoji">About Our Project</span></h1>
               <span className="label"></span>
             </div>
             <h1 className="headline">
               Code Connectivity
-              <span className="gradient-text">Visualizer</span>
+              <span className="gradient-text"> Visualizer</span>
             </h1>
             <p className="description">
               Transforming complex codebases into beautiful, interactive 3D visualizations that reveal 
@@ -77,7 +160,7 @@ function AboutSection() {
           </div>
 
           {/* Mission */}
-          <div className={`section delay-300 ${isVisible ? 'fade-in' : 'hidden'}`}>
+          <div id="mission" className={`section delay-300 ${isVisible ? 'fade-in' : 'hidden'}`}>
             <div className="card glass-card">
               <h2 className="subheading">Our Mission</h2>
               <p className="text">
@@ -89,7 +172,7 @@ function AboutSection() {
           </div>
 
           {/* Features */}
-          <div className={`section delay-500 ${isVisible ? 'fade-in' : 'hidden'}`}>
+          <div id="features" className={`section delay-500 ${isVisible ? 'fade-in' : 'hidden'}`}>
             <h2 className="subheading center">What Makes Us Special</h2>
             <div className="feature-grid">
               {features.map((feature, index) => (

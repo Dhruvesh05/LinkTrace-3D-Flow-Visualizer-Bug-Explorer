@@ -1,15 +1,10 @@
-// src/app/about/page.js
-
-// import AboutSection from '../components/AboutSection';
-
-// export default function AboutPage() {
-//   return <AboutSection />;
-// }
+import AboutSection from '../../components/About'; // fixed path
 
 export default function AboutPage() {
   return (
     <div>
       <h1>About Page</h1>
+      <AboutSection /> {/* render the component */}
     </div>
   );
 }

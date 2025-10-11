@@ -1,146 +1,121 @@
-/* UploadSection.css */
+/* UploadSection.css - updated spacing & visualizer area */
+
 .upload-wrapper {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f0f4ff, #dbeafe, #e0e7ff);
-  padding: 3rem 1rem;
-  font-family: 'Poppins', sans-serif;
+  min-height: 100dvh;
+  width: 100%;
+  background: linear-gradient(135deg, #f7fbff 0%, #f8fafc 100%);
+  padding: clamp(16px, 3vw, 32px);
+  box-sizing: border-box;
+  font-family: 'Poppins', system-ui, sans-serif;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
 }
 
 .upload-container {
-  max-width: 700px;
-  width: 100%;
+  width: min(95%, 1100px);
   background: white;
-  padding: 2rem;
-  border-radius: 1.5rem;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
+  padding: clamp(16px, 2.5vw, 28px);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
+  overflow: visible;
 }
 
-.upload-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
+/* Header */
+.upload-header { text-align: center; margin-bottom: 1.5rem; }
+.upload-header h1 { font-size: 1.6rem; color: #0f172a; margin: 0; }
+.upload-header p { color: #475569; margin-top: 6px; }
 
-.upload-header h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.upload-header p {
-  font-size: 1rem;
-  color: #475569;
-  margin-top: 0.25rem;
-}
-
-.upload-btn-wrapper {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.upload-btn {
-  flex: 1;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 1rem;
-  border: none;
+/* Dropzone */
+.upload-dropzone {
+  border: 2px dashed rgba(59,130,246,0.22);
+  border-radius: 12px;
+  padding: 1.5rem;
   cursor: pointer;
-  background: linear-gradient(90deg, #3b82f6, #6366f1);
-  color: white;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(59,130,246,0.03), transparent 60%);
 }
-
-.upload-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(59, 130, 246, 0.4);
+.upload-dropzone.drag-active {
+  background: linear-gradient(180deg, rgba(59,130,246,0.08), transparent 60%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(59,130,246,0.08);
 }
+.upload-icon { font-size: 2rem; display:block; margin-bottom: 0.5rem; }
+.upload-prompt h2 { margin: 0; font-size: 1.05rem; color: #0f172a; }
+.upload-prompt p { margin: 6px 0 0; color: #64748b; font-size: 0.95rem; }
+.upload-prompt .muted { display:block; margin-top:0.5rem; color:#94a3b8; font-size:0.8rem; }
 
-.upload-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.hidden-input {
-  display: none;
-}
-
-.file-list {
-  background: #f1f5f9;
-  padding: 1rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.file-list h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 0.75rem;
-}
-
-.file-scroll {
-  max-height: 12rem;
-  overflow-y: auto;
-}
-
+/* file list */
+.file-list { margin-top: 1.25rem; background:#f8fafc; padding: 0.9rem; border-radius:10px; }
+.file-list h3 { margin: 0 0 0.5rem 0; color: #0f172a; font-size:1rem; }
+.file-scroll { max-height: 12rem; overflow-y: auto; padding-right: 6px; }
 .file-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #e0e7ff;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.75rem;
-  margin-bottom: 0.5rem;
-  transition: background 0.3s ease;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 0.6rem 0.8rem; border-radius: 10px; margin-bottom: 0.5rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-
-.file-item:hover {
-  background-color: #c7d2fe;
-}
-
-.file-details {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.file-name {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #1e293b;
-}
-
+.file-item:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(2,6,23,0.06); }
+.file-details { display:flex; gap:0.75rem; align-items:center; flex:1; min-width:0; }
+.file-name { font-size: 0.95rem; color:#0f172a; word-break: break-all; }
+.file-size { color:#64748b; font-size:0.85rem; }
 .file-remove {
-  color: #ef4444;
-  background-color: #fee2e2;
-  font-size: 0.875rem;
-  border: none;
-  padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  background:#fee2e2; color:#b91c1c; border:none; padding:0.25rem 0.6rem; border-radius:9999px; cursor:pointer;
 }
 
-.file-remove:hover {
-  background-color: #fca5a5;
+/* buttons */
+.upload-btn-wrapper { display:flex; justify-content:center; margin-top:1rem; }
+.upload-btn {
+  background: linear-gradient(90deg,#3b82f6,#8b5cf6);
+  color:white; border:none; padding:0.7rem 1.4rem; border-radius:10px; font-weight:600; cursor:pointer;
+  box-shadow: 0 8px 20px rgba(59,130,246,0.12);
+}
+.upload-btn:disabled { opacity:.6; cursor:not-allowed; box-shadow:none; }
+
+/* error */
+.error { color:#ef4444; margin-top:0.75rem; text-align:center; }
+
+/* Bug section wrapper */
+.bug-section-wrapper { margin-top: 1.5rem; }
+
+/* Visualizer wrapper — gives the 3D graph a proper visible area */
+.visualizer-wrapper {
+  margin-top: 2rem;
+  width: 100%;
+  height: 70vh;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fbfdff, #f4f8ff);
+  box-shadow: 0 12px 40px rgba(2,6,23,0.06);
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
 }
 
-.upload-back {
+/* placeholder when no graph */
+.visualizer-placeholder {
+  padding: 2rem;
   text-align: center;
-  font-size: 0.875rem;
   color: #64748b;
-  cursor: pointer;
-  margin-top: 1.5rem;
 }
 
-.upload-back span:hover {
-  color: #3b82f6;
-  text-decoration: underline;
+/* responsive tweaks */
+@media (max-width: 768px) {
+  .visualizer-wrapper { height: 60vh; margin-top: 1.25rem; }
+  .file-item { flex-direction: column; align-items:flex-start; gap:0.4rem; }
 }
+
+.visualizer-wrapper {
+  margin-top: 2rem;
+  width: 100%;
+  height: 95vh; /* Increased to almost fullscreen */
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fbfdff, #f4f8ff);
+  box-shadow: 0 12px 50px rgba(2,6,23,0.08);
+  transition: all 0.4s ease;
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+}
+

@@ -27,19 +27,19 @@ export default function RootLayout({ children }) {
         <nav>
           <a href="#home">Home</a>
           <a href="#upload">Upload</a>
-          <a href="/visualizer">Visualizer</a>
+          {/* <a href="/visualizer">Visualizer</a>
           <a href="#errors">Errors</a>
-          <a href="#report">Report</a>
+          <a href="#report">Report</a> */}
           <a href="#about">About</a>
-          <a href="#explorer">Join Us</a>
+          {/* <a href="#explorer">Join Us</a> */}
         </nav>
 
         <section id="home">{children}</section>
         <section id="upload"><UploadSection /></section>
-        <section id="visualizer">Visualizer Section</section>
+        {/* <section id="visualizer">Visualizer Section</section>
         <section id="errors">Errors Section</section>
         <section id="explorer">Explorer Section</section>
-        <section id="report">Report Section</section>
+        <section id="report">Report Section</section> */}
         <section id="about"><AboutSection /></section>
       </body>
     </html>
