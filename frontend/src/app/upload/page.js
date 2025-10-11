@@ -2,6 +2,8 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
 export default function UploadPage() {
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
@@ -28,7 +30,7 @@ export default function UploadPage() {
     files.forEach(({ file, path }) => formData.append("files", file, path));
 
     try {
-      const res = await fetch("http://localhost:5000/upload", { method: "POST", body: formData });
+      const res = await fetch(`${BACKEND_URL}/upload`, { method: "POST", body: formData });
       const data = await res.json();
       localStorage.setItem("graphData", JSON.stringify(data));
       router.push("/visualizer");

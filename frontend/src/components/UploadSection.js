@@ -7,6 +7,11 @@ import "./UploadSection.css";
 // Dynamic import of visualizer to prevent SSR issues
 const CodeGraphVisualizer = dynamic(() => import("./CodeGraphVisualizer"), { ssr: false });
 
+// Backend URL setup
+// Will use environment variable in production, localhost in development
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
+
 export default function UploadSection() {
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
@@ -15,7 +20,6 @@ export default function UploadSection() {
   const fileInputRef = useRef(null);
 
   const acceptedExtensions = [".js", ".ts", ".jsx", ".tsx", ".java", ".cpp", ".c", ".py"];
-
   const langColor = {
     js: "#1e3a8a",
     ts: "#0ea5e9",
@@ -27,7 +31,6 @@ export default function UploadSection() {
     tsx: "#0d9488",
   };
 
-  // Add files (filter + prevent duplicates)
   const addFiles = useCallback((fileList) => {
     const newFiles = Array.from(fileList)
       .filter(f => acceptedExtensions.some(ext => f.name.endsWith(ext)))
@@ -47,7 +50,6 @@ export default function UploadSection() {
 
   const handleFileInput = e => e.target.files && addFiles(e.target.files);
 
-  // Recursive folder traversal
   const traverseFileTree = useCallback((entry, pathPrefix = "") => {
     const ignoredFolders = ["node_modules", ".git", "dist", "build"];
     return new Promise(resolve => {
@@ -71,7 +73,6 @@ export default function UploadSection() {
     });
   }, []);
 
-  // Drag & Drop
   const handleDrop = useCallback(async e => {
     e.preventDefault();
     const items = e.dataTransfer.items;
@@ -100,13 +101,13 @@ export default function UploadSection() {
     files.forEach(({ file, path }) => formData.append("files", file, path));
 
     try {
-      const res = await fetch("http://localhost:5000/upload", { method: "POST", body: formData });
+      const res = await fetch(`${BACKEND_URL}/upload`, { method: "POST", body: formData });
       if (!res.ok) throw new Error(`Backend error: ${res.status}`);
       const data = await res.json();
       setGraphData(data.graphData || null);
       setBugData(data.bugData || null);
     } catch (err) {
-      console.error(err);
+      console.error("Upload failed:", err);
       alert(`Upload failed: ${err.message}`);
     }
 

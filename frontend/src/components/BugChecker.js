@@ -5,6 +5,8 @@ export default function BugChecker({ files }) {
   const [result, setResult] = useState("");
   const [errorLog, setErrorLog] = useState([]);
 
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://linktrace-3d-flow-visualizer-bug-explorer.onrender.com" || "http://localhost:5000";
+
   const handleCheck = async () => {
     if (!files || files.length === 0) {
       setResult("⚠ No files selected");
@@ -13,15 +15,10 @@ export default function BugChecker({ files }) {
     }
 
     try {
-      // Send only the selected files (filtered by extension) for bug checking
       const formData = new FormData();
       files.forEach(f => formData.append("files", f.file, f.path));
 
-      const response = await fetch("http://localhost:5000/upload", { 
-        method: "POST",
-        body: formData
-      });
-
+      const response = await fetch(`${BACKEND_URL}/upload`, { method: "POST", body: formData });
       const data = await response.json();
 
       if (!data || !data.files) {

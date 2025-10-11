@@ -1,20 +1,43 @@
 import express from "express";
 import multer from "multer";
 import cors from "cors";
-import path from "path";
 import fs from "fs";
+import path from "path";
 import { ESLint } from "eslint";
 import { exec } from "child_process";
+import dotenv from "dotenv";
+
+dotenv.config(); // Load .env variables
 
 const app = express();
-const PORT = 5000;
 
-app.use(cors());
+// Port
+const PORT = process.env.PORT || 5000;
+
+// Setup CORS for multiple origins
+const allowedOrigins = process.env.FRONTEND_URLS
+  ? process.env.FRONTEND_URLS.split(",")
+  : [];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (Postman, curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `CORS policy: Origin ${origin} not allowed`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
+
 app.use(express.json());
 
+// Multer in-memory storage
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// Allowed extensions & blocked files
 const allowedExtensions = [".js", ".jsx", ".ts", ".tsx", ".py", ".c", ".cpp", ".java"];
 const blockedFiles = [
   "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml",
@@ -22,30 +45,48 @@ const blockedFiles = [
   ".gitignore", "README.md"
 ];
 
-// ESLint instance
+// ESLint setup
 const eslint = new ESLint();
 
-// Dependency parser for JS/TS
-function parseDependencies(content) {
-  const regex = /(?:import .* from ['"](.+)['"]|require\(['"](.+)['"]\))/g;
-  const deps = [];
-  let match;
-  while ((match = regex.exec(content)) !== null) {
-    deps.push(match[1] || match[2]);
+// Ensure temp folder exists
+const TEMP_DIR = "./temp";
+if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR);
+
+// Parse functions (optional)
+function parseFunctions(filePath, ext) {
+  const content = fs.readFileSync(filePath, "utf-8");
+  const lines = content.split("\n");
+  const functions = [];
+
+  if ([".js", ".ts", ".jsx", ".tsx"].includes(ext)) {
+    lines.forEach(line => {
+      line = line.trim();
+      let match = line.match(/function\s+(\w+)\s*\(/);
+      if (match) functions.push(match[1]);
+      match = line.match(/const\s+(\w+)\s*=\s*\(.*\)\s*=>/);
+      if (match) functions.push(match[1]);
+    });
+  } else if (ext === ".py") {
+    lines.forEach(line => {
+      line = line.trim();
+      if (line.startsWith("def ")) functions.push(line.split(" ")[1].split("(")[0]);
+    });
+  } else if (ext === ".java") {
+    lines.forEach(line => {
+      const match = line.match(/(public|private|protected)?\s+\w+\s+(\w+)\s*\(/);
+      if (match) functions.push(match[2]);
+    });
+  } else if ([".c", ".cpp"].includes(ext)) {
+    lines.forEach(line => {
+      const match = line.match(/(\w+)\s+(\w+)\s*\(.*\)\s*\{/);
+      if (match) functions.push(match[2]);
+    });
   }
-  return deps;
+
+  return functions;
 }
 
-function resolveDep(dep, files) {
-  if (!dep.startsWith(".") && !dep.startsWith("/")) return null;
-  let base = path.basename(dep);
-  const possibleNames = [
-    base, base + ".js", base + ".jsx", base + ".ts", base + ".tsx"
-  ];
-  return files.find(f => possibleNames.includes(f.originalname));
-}
-
-// Run ESLint for JS/TS files
+// Linting functions
 async function lintJS(file) {
   const content = file.buffer.toString("utf-8");
   const results = await eslint.lintText(content, { filePath: file.originalname });
@@ -58,85 +99,73 @@ async function lintJS(file) {
   }));
 }
 
-// Run Python lint using pyflakes
 function lintPython(file) {
-  return new Promise((resolve) => {
-    const filePath = path.join("./temp", file.originalname);
+  return new Promise(resolve => {
+    const filePath = path.join(TEMP_DIR, file.originalname);
     fs.writeFileSync(filePath, file.buffer);
     exec(`pyflakes "${filePath}"`, (err, stdout) => {
-      const errors = stdout
-        .split("\n")
-        .filter(line => line)
-        .map(line => ({ message: line }));
+      const errors = stdout.split("\n").filter(Boolean).map(line => ({ message: line }));
       fs.unlinkSync(filePath);
       resolve(errors);
     });
   });
 }
 
-// Run C/C++ lint using gcc/clang
 function lintC(file) {
-  return new Promise((resolve) => {
-    const filePath = path.join("./temp", file.originalname);
+  return new Promise(resolve => {
+    const filePath = path.join(TEMP_DIR, file.originalname);
     fs.writeFileSync(filePath, file.buffer);
     exec(`gcc -fsyntax-only "${filePath}"`, (err, stdout, stderr) => {
-      const errors = stderr
-        .split("\n")
-        .filter(line => line)
-        .map(line => ({ message: line }));
+      const errors = stderr.split("\n").filter(Boolean).map(line => ({ message: line }));
       fs.unlinkSync(filePath);
       resolve(errors);
     });
   });
 }
 
-// Run Java lint using javac
 function lintJava(file) {
-  return new Promise((resolve) => {
-    const filePath = path.join("./temp", file.originalname);
+  return new Promise(resolve => {
+    const filePath = path.join(TEMP_DIR, file.originalname);
     fs.writeFileSync(filePath, file.buffer);
     exec(`javac "${filePath}"`, (err, stdout, stderr) => {
-      const errors = stderr
-        .split("\n")
-        .filter(line => line)
-        .map(line => ({ message: line }));
-    fs.unlinkSync(filePath);
-    resolve(errors);
+      const errors = stderr.split("\n").filter(Boolean).map(line => ({ message: line }));
+      fs.unlinkSync(filePath);
+      resolve(errors);
     });
   });
 }
 
-// Ensure temp folder exists
-if (!fs.existsSync("./temp")) fs.mkdirSync("./temp");
-
+// Upload endpoint
 app.post("/upload", upload.array("files"), async (req, res) => {
   try {
-    if (!req.files || req.files.length === 0) return res.status(400).json({ error: "No files uploaded" });
+    if (!req.files || req.files.length === 0)
+      return res.status(400).json({ error: "No files uploaded" });
 
     const files = req.files.filter(f =>
       allowedExtensions.includes(path.extname(f.originalname)) &&
       !blockedFiles.includes(f.originalname)
     );
 
-    const nodes = [];
+    const nodes = files.map(f => ({ id: f.originalname }));
     const links = [];
-    const bugData = { files: [] };
 
-    // Add nodes
-    files.forEach(file => nodes.push({ id: file.originalname }));
-
-    // Build dependency links for JS/TS
+    // JS/TS import links
     const jsFiles = files.filter(f => [".js", ".jsx", ".ts", ".tsx"].includes(path.extname(f.originalname)));
     jsFiles.forEach(file => {
       const content = file.buffer.toString("utf-8");
-      const deps = parseDependencies(content);
-      deps.forEach(dep => {
-        const depFile = resolveDep(dep, jsFiles);
+      const regex = /(?:import .* from ['"](.+)['"]|require\(['"](.+)['"]\))/g;
+      let match;
+      while ((match = regex.exec(content)) !== null) {
+        const depName = match[1] || match[2];
+        const depFile = jsFiles.find(f2 =>
+          f2.originalname === depName || f2.originalname === depName + ".js"
+        );
         if (depFile) links.push({ source: file.originalname, target: depFile.originalname });
-      });
+      }
     });
 
-    // Lint each file
+    // Lint all files
+    const bugData = { files: [] };
     for (const file of files) {
       const ext = path.extname(file.originalname);
       let errors = [];
@@ -150,9 +179,10 @@ app.post("/upload", upload.array("files"), async (req, res) => {
     res.json({ graphData: { nodes, links }, bugData });
 
   } catch (err) {
-    console.error("Upload error:", err.message);
-    res.status(500).json({ error: "Upload failed" });
+    console.error("Upload error:", err);
+    res.status(500).json({ error: "Upload failed", details: err.message });
   }
 });
 
-app.listen(PORT, () => console.log(`✅ Backend running on http://localhost:${PORT}`));
+// Start server
+app.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));

@@ -1,10 +1,14 @@
 'use client';
 import React, { useState, useRef, useCallback } from "react";
-import GraphVisualizer from "./GraphVisualizer";
+import dynamic from "next/dynamic";
 import ErrorSection from "./ErrorSection";
 import "./UploadSection.css";
 
-export default function UploadSection() {
+const GraphVisualizer = dynamic(() => import("./CodeGraphVisualizer"), { ssr: false });
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://linktrace-3d-flow-visualizer-bug-explorer.onrender.com" || "http://localhost:5000";
+
+export default function GraphUpload() {
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [graphData, setGraphData] = useState(null);
@@ -18,19 +22,20 @@ export default function UploadSection() {
     py: "#16a34a",
     cpp: "#f97316",
     c: "#fb923c",
-    java: "#eab308"
+    java: "#eab308",
+    jsx: "#7c3aed",
+    tsx: "#0d9488",
   };
 
-  // Merge new files into existing list
   const addFiles = useCallback((fileList) => {
     const newFiles = Array.from(fileList)
-      .filter(file => acceptedExtensions.some(ext => file.name.endsWith(ext)))
-      .map(file => ({
-        file,
-        name: file.name,
-        path: file.webkitRelativePath || file.name,
-        size: file.size,
-        ext: file.name.split('.').pop().toLowerCase()
+      .filter(f => acceptedExtensions.some(ext => f.name.endsWith(ext)))
+      .map(f => ({
+        file: f,
+        name: f.name,
+        path: f.webkitRelativePath || f.name,
+        size: f.size,
+        ext: f.name.split(".").pop().toLowerCase()
       }));
 
     setFiles(prev => {
@@ -39,68 +44,64 @@ export default function UploadSection() {
     });
   }, []);
 
-  // Handle file input
-  const handleFileInput = (e) => {
-    if (e.target.files) addFiles(e.target.files);
-  };
+  const handleFileInput = e => e.target.files && addFiles(e.target.files);
 
-  // Drag & drop folders/files
-  const handleDrop = async (e) => {
-    e.preventDefault();
-    const items = e.dataTransfer.items;
-    if (items) {
-      const allFiles = [];
-      for (const item of items) {
-        const entry = item.webkitGetAsEntry();
-        if (entry) {
-          const filesFromEntry = await traverseFileTree(entry);
-          allFiles.push(...filesFromEntry);
-        }
-      }
-      addFiles(allFiles);
-    }
-  };
-
-  const traverseFileTree = (entry, pathPrefix = "") => {
-    return new Promise((resolve) => {
+  const traverseFileTree = useCallback((entry, pathPrefix = "") => {
+    const ignoredFolders = ["node_modules", ".git", "dist", "build"];
+    return new Promise(resolve => {
       if (entry.isFile) {
-        entry.file(file => resolve([{ file, path: pathPrefix + file.name, size: file.size, name: file.name, ext: file.name.split('.').pop().toLowerCase() }]));
+        entry.file(file => resolve([{
+          file,
+          path: pathPrefix + file.name,
+          size: file.size,
+          name: file.name,
+          ext: file.name.split(".").pop().toLowerCase()
+        }])); 
       } else if (entry.isDirectory) {
+        if (ignoredFolders.includes(entry.name)) return resolve([]);
         const dirReader = entry.createReader();
-        dirReader.readEntries(async (entries) => {
+        dirReader.readEntries(async entries => {
           const filesPromises = entries.map(e => traverseFileTree(e, pathPrefix + entry.name + "/"));
           const results = await Promise.all(filesPromises);
           resolve(results.flat());
         });
       }
     });
-  };
+  }, []);
 
-  const removeFile = (index) => {
-    setFiles(prev => prev.filter((_, i) => i !== index));
-  };
+  const handleDrop = useCallback(async e => {
+    e.preventDefault();
+    const items = e.dataTransfer.items;
+    if (!items) return;
+
+    const allFiles = [];
+    for (const item of items) {
+      const entry = item.webkitGetAsEntry();
+      if (entry) {
+        const filesFromEntry = await traverseFileTree(entry);
+        allFiles.push(...filesFromEntry);
+      }
+    }
+    addFiles(allFiles);
+  }, [addFiles, traverseFileTree]);
+
+  const removeFile = i => setFiles(prev => prev.filter((_, index) => index !== i));
 
   const handleUpload = async () => {
-    if (!files.length) return;
+    if (!files.length) return alert("No files selected.");
     setUploading(true);
+    setGraphData(null);
+    setBugData(null);
 
     const formData = new FormData();
     files.forEach(({ file, path }) => formData.append("files", file, path));
 
     try {
-      const res = await fetch("http://localhost:5000/upload", {
-        method: "POST",
-        body: formData
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Backend error: ${res.status} - ${text}`);
-      }
-
+      const res = await fetch(`${BACKEND_URL}/upload`, { method: "POST", body: formData });
+      if (!res.ok) throw new Error(`Backend error: ${res.status}`);
       const data = await res.json();
-      setGraphData(data.graphData);
-      setBugData(data.bugData);
+      setGraphData(data.graphData || null);
+      setBugData(data.bugData || null);
     } catch (err) {
       console.error("Upload failed:", err);
       alert(`Upload failed: ${err.message}`);
@@ -110,62 +111,35 @@ export default function UploadSection() {
   };
 
   return (
-    <div
-      className="upload-wrapper"
-      onDragOver={e => e.preventDefault()}
-      onDrop={handleDrop}
-    >
+    <div className="upload-wrapper" onDragOver={e => e.preventDefault()} onDrop={handleDrop}>
       <div className="upload-container">
-        <div className="upload-header">
-          <h1>Upload Files & Folders</h1>
-          <p>Select multiple files or folders to visualize and check for bugs.</p>
-        </div>
+        <h1>📁 Upload Files / Folders</h1>
+        <p>Select multiple files or folders to visualize & detect bugs.</p>
 
-        <div
-          className="upload-dropzone"
-          onClick={() => fileInputRef.current.click()}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            webkitdirectory="true"
-            onChange={handleFileInput}
-            className="hidden-input"
-          />
+        <div className="upload-dropzone" onClick={() => fileInputRef.current.click()}>
+          <input type="file" ref={fileInputRef} multiple webkitdirectory="true" onChange={handleFileInput} className="hidden-input"/>
           <div className="upload-prompt">
-            <span className="upload-icon">📂</span>
-            <h2>Drag & Drop or Click to Browse</h2>
+            <span>📂</span>
+            <h2>Drag & Drop or Click</h2>
             <p>Supported: {acceptedExtensions.join(", ")}</p>
           </div>
         </div>
 
         {files.length > 0 && (
           <div className="file-list">
-            <h3>Selected Files/Folders:</h3>
-            <div className="file-scroll">
-              {files.map((f, i) => (
-                <div key={i} className="file-item" style={{ background: langColor[f.ext] || "#334155" }}>
-                  <div className="file-details">
-                    <span className="file-name">{f.path}</span>
-                    <span className="file-size">{(f.size / 1024).toFixed(2)} KB</span>
-                  </div>
-                  <button className="file-remove" onClick={() => removeFile(i)}>Remove</button>
-                </div>
-              ))}
-            </div>
+            {files.map((f, i) => (
+              <div key={i} className="file-item" style={{ background: langColor[f.ext] || "#334155" }}>
+                <span>{f.path}</span>
+                <span>{(f.size / 1024).toFixed(2)} KB</span>
+                <button onClick={() => removeFile(i)}>✖</button>
+              </div>
+            ))}
           </div>
         )}
 
-        <div className="upload-btn-wrapper">
-          <button
-            className="upload-btn"
-            onClick={handleUpload}
-            disabled={uploading || !files.length}
-          >
-            {uploading ? "Uploading..." : "Start Visualization"}
-          </button>
-        </div>
+        <button className="upload-btn" onClick={handleUpload} disabled={uploading || !files.length}>
+          {uploading ? "Uploading..." : "Start Visualization"}
+        </button>
 
         {graphData && <GraphVisualizer graphData={graphData} />}
         {bugData && <ErrorSection data={bugData} />}

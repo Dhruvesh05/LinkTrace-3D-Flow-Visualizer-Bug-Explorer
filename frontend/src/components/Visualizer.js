@@ -8,9 +8,7 @@ export default function Visualizer() {
   useEffect(() => {
     try {
       const stored = localStorage.getItem("graphData");
-      if (stored) {
-        setData(JSON.parse(stored));
-      }
+      if (stored) setData(JSON.parse(stored));
     } catch (err) {
       console.error("Failed to parse stored graphData", err);
     }
@@ -18,6 +16,5 @@ export default function Visualizer() {
 
   if (!data) return <p>No graph to show</p>;
 
-  // `data` should be the graphData object itself
   return <CodeGraphVisualizer graphData={data} isVisible={true} />;
 }
