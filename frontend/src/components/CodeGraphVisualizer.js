@@ -14,18 +14,9 @@ export default function CodeGraphVisualizer({ graphData, isVisible = true }) {
 
   // Node colors by file type
   const extColors = {
-    js: "#22c55e",
-    jsx: "#7c3aed",
-    ts: "#0ea5e9",
-    tsx: "#0d9488",
-    py: "#facc15",
-    cpp: "#ef4444",
-    c: "#fb923c",
-    java: "#eab308",
-    html: "#f43f5e",
-    css: "#3b82f6",
-    json: "#a855f7",
-    default: "#9ca3af",
+    js: "#22c55e", jsx: "#7c3aed", ts: "#0ea5e9", tsx: "#0d9488",
+    py: "#facc15", cpp: "#ef4444", c: "#fb923c", java: "#eab308",
+    html: "#f43f5e", css: "#3b82f6", json: "#a855f7", default: "#9ca3af"
   };
 
   const getNodeColor = node =>
@@ -38,20 +29,36 @@ export default function CodeGraphVisualizer({ graphData, isVisible = true }) {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Adjust camera & force layout
+  // Ensure all links have valid nodes
+  useEffect(() => {
+    if (!graphData) return;
+
+    const nodeIds = new Set(graphData.nodes.map(n => n.id));
+    graphData.links.forEach(l => {
+      const sourceId = typeof l.source === "string" ? l.source : l.source?.id;
+      const targetId = typeof l.target === "string" ? l.target : l.target?.id;
+      if (!nodeIds.has(sourceId)) graphData.nodes.push({ id: sourceId });
+      if (!nodeIds.has(targetId)) graphData.nodes.push({ id: targetId });
+    });
+  }, [graphData]);
+
+  // Adjust camera & layout
   useEffect(() => {
     if (!graphData) return;
     const fg = is3DView ? fg3DRef.current : fg2DRef.current;
     if (fg?.d3Force("charge")) fg.d3Force("charge").strength(-180);
-    if (fg?.cameraPosition) fg.cameraPosition({ z: 200 }, 400);
+    if (fg?.cameraPosition) fg.cameraPosition({ z: 300 }, 400);
   }, [graphData, is3DView]);
 
-  // Node tooltip with imports & exports
+  // Node tooltip
   const renderNodeTooltip = node => {
     if (!node) return null;
     const connectedFiles = graphData.links
-      .filter(l => l.source.id === node.id || l.target.id === node.id)
-      .map(l => (l.source.id === node.id ? l.target.id : l.source.id))
+      .filter(l => (typeof l.source === "string" ? l.source : l.source?.id) === node.id || 
+                   (typeof l.target === "string" ? l.target : l.target?.id) === node.id)
+      .map(l => ((typeof l.source === "string" ? l.source : l.source.id) === node.id ? 
+                 (typeof l.target === "string" ? l.target : l.target.id) : 
+                 (typeof l.source === "string" ? l.source : l.source.id)))
       .slice(0, 5);
 
     return (
@@ -63,6 +70,9 @@ export default function CodeGraphVisualizer({ graphData, isVisible = true }) {
       </div>
     );
   };
+
+  // Link color: thick white for connectivity
+  const getLinkColor = () => "#ffffff";
 
   return (
     <section className={`visualizer-section ${isVisible ? "show" : "hide"}`}>
@@ -80,10 +90,11 @@ export default function CodeGraphVisualizer({ graphData, isVisible = true }) {
             graphData={graphData}
             backgroundColor="#000"
             nodeColor={getNodeColor}
-            linkColor={() => "#fff"}
-            linkDirectionalArrowLength={4}
+            linkColor={getLinkColor}
+            linkWidth={3}
+            linkDirectionalArrowLength={6}
             linkDirectionalArrowRelPos={1}
-            linkCurvature={0.12}
+            linkCurvature={0.15}
             onNodeHover={setHoveredNode}
             onLinkHover={setHoveredLink}
           />
@@ -93,10 +104,11 @@ export default function CodeGraphVisualizer({ graphData, isVisible = true }) {
             graphData={graphData}
             backgroundColor="#000"
             nodeColor={getNodeColor}
-            linkColor={() => "#fff"}
-            linkDirectionalArrowLength={4}
+            linkColor={getLinkColor}
+            linkWidth={3}
+            linkDirectionalArrowLength={6}
             linkDirectionalArrowRelPos={1}
-            linkCurvature={0.12}
+            linkCurvature={0.15}
             onNodeHover={setHoveredNode}
             onLinkHover={setHoveredLink}
             nodeCanvasObject={(node, ctx, globalScale) => {
@@ -114,7 +126,6 @@ export default function CodeGraphVisualizer({ graphData, isVisible = true }) {
           />
         )}
 
-        {/* Tooltip */}
         {hoveredNode && renderNodeTooltip(hoveredNode)}
       </div>
     </section>

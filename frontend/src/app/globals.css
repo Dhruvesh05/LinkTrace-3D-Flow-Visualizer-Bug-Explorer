@@ -64,6 +64,108 @@ body {
   background-color: #f8f9fa;
 }
 
+/* ================================
+   Brutalist responsive overrides
+   - Sharp edges (radius = 0 everywhere)
+   - Minimal white backgrounds
+   - Fluid spacing with clamp()
+   ================================ */
+/* Global: enforce sharp geometry */
+*:where(*) {
+  border-radius: 0 !important;
+}
+
+/* About section cleanup */
+.about-wrapper {
+  background: #ffffff !important;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem) !important;
+}
+.background-effects,
+.blob,
+.particle {
+  display: none !important;
+}
+
+/* Sections */
+.section {
+  max-width: min(96vw, 1200px) !important;
+  margin: 0 auto clamp(2rem, 6vw, 5rem) auto !important;
+  padding: clamp(1.25rem, 3vw, 2rem) clamp(0.75rem, 2vw, 1.25rem) !important;
+}
+
+/* Headings and text */
+.headline { font-size: clamp(2rem, 5vw, 3rem) !important; }
+.subheading { font-size: clamp(1.25rem, 3.5vw, 2rem) !important; }
+.description {
+  max-width: min(90vw, 800px) !important;
+  margin: 0 auto clamp(1rem, 3vw, 2rem) auto !important;
+  line-height: 1.7 !important;
+  color: #0f172a !important;
+}
+.gradient-text {
+  background: none !important;
+  color: #0f172a !important;
+  font-size: clamp(1.25rem, 3.5vw, 2.25rem) !important;
+}
+
+/* Cards and feature tiles */
+.card,
+.feature-card {
+  background: #ffffff !important;
+  border: 3px solid #e2e8f0 !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08) !important;
+  padding: clamp(1rem, 3vw, 2rem) !important;
+}
+.feature-card:hover { transform: translateY(-2px) !important; }
+.feature-grid { gap: clamp(1rem, 3vw, 2rem) !important; }
+.blue-cyan, .purple-pink, .green-teal { background: transparent !important; }
+.icon {
+  background: #f8fafc !important;
+  border: 3px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Steps */
+.steps-grid {
+  gap: clamp(1rem, 3vw, 2rem) !important;
+  margin-top: clamp(1rem, 3vw, 2rem) !important;
+}
+.step-number {
+  background: #f8fafc !important;
+  border: 3px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+}
+
+/* Tech stack */
+.tech-stack { gap: clamp(0.5rem, 2vw, 1rem) !important; }
+.tech-pill {
+  border: 3px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  font-weight: 600 !important;
+}
+.tech-pill:hover { transform: translateY(-1px) !important; }
+.tech-desc { font-size: clamp(0.95rem, 2.2vw, 1rem) !important; color: #0f172a !important; }
+
+/* CTAs */
+.cta-buttons { gap: clamp(0.75rem, 2vw, 1rem) !important; margin-top: clamp(1rem, 3vw, 2rem) !important; }
+.btn {
+  padding: clamp(0.75rem, 2vw, 0.9rem) clamp(1rem, 3vw, 2rem) !important;
+  font-weight: 700 !important;
+  border: 3px solid #0f172a !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  transition: all 0.25s ease !important;
+}
+/* unified variants (kept for specificity alignment) */
+/* .btn.primary, .btn.secondary */
+.btn:hover {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  transform: translateY(-2px) !important;
+}
+
 
 
 /* About section */
@@ -199,6 +301,7 @@ body {
 .gradient-text {
   display: block;
   background: linear-gradient(to right, #3b82f6, #8b5cf6, #06b6d4);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 300;

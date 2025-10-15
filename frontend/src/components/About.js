@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
-
+import './AboutSection.css';
 
 function AboutSection() {
   const [activeFeature, setActiveFeature] = useState(0);
@@ -69,11 +68,11 @@ function AboutSection() {
   ];
 
   const techStack = [
-    { name: "Next.js", color: "bg-black text-white" },
-    { name: "Node.js", color: "bg-green-600 text-white" },
-    { name: "Express.js", color: "bg-gray-700 text-white" },
-    { name: "Three.js", color: "bg-blue-600 text-white" },
-    { name: "React", color: "bg-blue-500 text-white" }
+    { name: "Next.js", color: "bg-black" },
+    { name: "Node.js", color: "bg-green-600" },
+    { name: "Express.js", color: "bg-gray-700" },
+    { name: "Three.js", color: "bg-blue-600" },
+    { name: "React", color: "bg-blue-500" }
   ];
 
   const navItems = [
@@ -130,24 +129,16 @@ function AboutSection() {
         </div>
       </nav>
 
-      {/* Blobs and particles */}
-      <div className="background-effects">
-        <div className="blob blob-top-right"></div>
-        <div className="blob blob-bottom-left delay-2s"></div>
-        <div className="blob blob-center delay-4s"></div>
-        <div className="particle particle-1 delay-1s"></div>
-        <div className="particle particle-2 delay-3s"></div>
-        <div className="particle particle-3 delay-5s"></div>
-      </div>
-
       {/* Main Content */}
       <div className="content">
         <div className="container">
           {/* Header */}
           <div id="about" className={`section ${isVisible ? 'fade-in' : 'hidden'}`}>
             <div className="tagline">
-              <h1><span className="emoji">About Our Project</span></h1>
-              <span className="label"></span>
+              <h1>
+                <span className="emoji">🚀</span>
+                <span>About Our Project</span>
+              </h1>
             </div>
             <h1 className="headline">
               Code Connectivity
@@ -212,7 +203,7 @@ function AboutSection() {
           </div>
 
           {/* Tech Stack */}
-          <div className={`section delay-900 ${isVisible ? 'fade-in' : 'hidden'}`}>
+          <div id="tech" className={`section delay-900 ${isVisible ? 'fade-in' : 'hidden'}`}>
             <h2 className="subheading center">Built With Modern Technology</h2>
             <div className="tech-stack">
               {techStack.map((tech, index) => (

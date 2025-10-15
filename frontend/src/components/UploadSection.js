@@ -4,13 +4,11 @@ import dynamic from "next/dynamic";
 import ErrorSection from "./ErrorSection";
 import "./UploadSection.css";
 
-// Dynamic import of visualizer to prevent SSR issues
+// Dynamic import for 3D visualizer (avoids SSR crash)
 const CodeGraphVisualizer = dynamic(() => import("./CodeGraphVisualizer"), { ssr: false });
 
-// Backend URL setup
-// Will use environment variable in production, localhost in development
+// Backend endpoint setup
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-
 
 export default function UploadSection() {
   const [files, setFiles] = useState([]);
@@ -31,6 +29,7 @@ export default function UploadSection() {
     tsx: "#0d9488",
   };
 
+  // ✅ Add new files to state safely
   const addFiles = useCallback((fileList) => {
     const newFiles = Array.from(fileList)
       .filter(f => acceptedExtensions.some(ext => f.name.endsWith(ext)))
@@ -50,6 +49,7 @@ export default function UploadSection() {
 
   const handleFileInput = e => e.target.files && addFiles(e.target.files);
 
+  // ✅ Recursive folder traversal
   const traverseFileTree = useCallback((entry, pathPrefix = "") => {
     const ignoredFolders = ["node_modules", ".git", "dist", "build"];
     return new Promise(resolve => {
@@ -73,6 +73,7 @@ export default function UploadSection() {
     });
   }, []);
 
+  // ✅ Handle folder drag-drop
   const handleDrop = useCallback(async e => {
     e.preventDefault();
     const items = e.dataTransfer.items;
@@ -91,8 +92,9 @@ export default function UploadSection() {
 
   const removeFile = i => setFiles(prev => prev.filter((_, index) => index !== i));
 
+  // ✅ Upload and process visualization + bug data
   const handleUpload = async () => {
-    if (!files.length) return alert("No files selected.");
+    if (!files.length) return alert("Please select files or a folder before uploading.");
     setUploading(true);
     setGraphData(null);
     setBugData(null);
@@ -104,6 +106,8 @@ export default function UploadSection() {
       const res = await fetch(`${BACKEND_URL}/upload`, { method: "POST", body: formData });
       if (!res.ok) throw new Error(`Backend error: ${res.status}`);
       const data = await res.json();
+
+      // Set both visualization and bug report data
       setGraphData(data.graphData || null);
       setBugData(data.bugData || null);
     } catch (err) {
@@ -118,10 +122,18 @@ export default function UploadSection() {
     <div className="upload-wrapper" onDragOver={e => e.preventDefault()} onDrop={handleDrop}>
       <div className="upload-container">
         <h1>📁 Upload Files / Folders</h1>
-        <p>Select multiple files or folders to visualize & detect bugs.</p>
+        <p>Upload your project to visualize code connections and detect bugs instantly.</p>
 
+        {/* Drop Zone */}
         <div className="upload-dropzone" onClick={() => fileInputRef.current.click()}>
-          <input type="file" ref={fileInputRef} multiple webkitdirectory="true" onChange={handleFileInput} className="hidden-input"/>
+          <input
+            type="file"
+            ref={fileInputRef}
+            multiple
+            webkitdirectory="true"
+            onChange={handleFileInput}
+            className="hidden-input"
+          />
           <div className="upload-prompt">
             <span>📂</span>
             <h2>Drag & Drop or Click</h2>
@@ -129,6 +141,7 @@ export default function UploadSection() {
           </div>
         </div>
 
+        {/* File List */}
         {files.length > 0 && (
           <div className="file-list">
             {files.map((f, i) => (
@@ -141,12 +154,26 @@ export default function UploadSection() {
           </div>
         )}
 
+        {/* Upload Button */}
         <button className="upload-btn" onClick={handleUpload} disabled={uploading || !files.length}>
-          {uploading ? "Uploading..." : "Start Visualization"}
+          {uploading ? "Uploading & Analyzing..." : "Start Visualization"}
         </button>
 
-        {graphData && <CodeGraphVisualizer graphData={graphData} />}
-        {bugData && <ErrorSection data={bugData} />}
+        {/* Graph Visualizer */}
+        {graphData && (
+          <>
+            <hr style={{ margin: "2rem 0", border: "1px solid #e2e8f0" }} />
+            <CodeGraphVisualizer graphData={graphData} />
+          </>
+        )}
+
+        {/* Bug Detection Section */}
+        {bugData && (
+          <>
+            <hr style={{ margin: "2rem 0", border: "1px solid #e2e8f0" }} />
+            <ErrorSection data={bugData} />
+          </>
+        )}
       </div>
     </div>
   );

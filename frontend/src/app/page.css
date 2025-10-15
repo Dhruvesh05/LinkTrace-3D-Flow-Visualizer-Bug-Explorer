@@ -7,6 +7,11 @@ body {
   background-color: #f8fafc;
   color: #334155;
 } 
+
+/* Enforce zero border radius across this page */
+*:where(*) {
+  border-radius: 0 !important;
+}
 .logo {
   font-size: 1.5rem;
   font-weight: 600;
@@ -39,31 +44,19 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0px;
+  padding: 0;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(to bottom right, #f8fafc, #e0f2fe, #e0e7ff);
+  background: #ffffff;
   color: #334155;
   font-family: "Segoe UI", sans-serif;
 }
 
-.background-blobs {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  background-color: transparent;
-}
+/* Disable decorative blobs for a clean, minimal look */
+.background-blobs { display: none !important; }
 
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(48px);
-  opacity: 0.3;
-  animation: pulse 6s infinite;
-}
+/* Legacy blob styles (kept for reference) */
+.blob { display: none !important; }
 
 .blob-1 {
   top: 25%;
@@ -92,14 +85,15 @@ body {
 }
 
 .home-content {
-  max-width: 48rem;
+  max-width: min(90vw, 60rem);
   text-align: center;
   position: relative;
   z-index: 1;
+  padding: clamp(0.5rem, 2vw, 1rem);
 }
 
 .title {
-  font-size: 72px;
+  font-size: clamp(2.25rem, 6vw, 4.5rem);
   font-family: "Inter", sans-serif;
   font-weight: 300;
   color: #1e293b;
@@ -108,14 +102,14 @@ body {
 
 .subtitle {
   display: block;
-  font-size: 2rem;
+  font-size: clamp(1.25rem, 3.5vw, 2rem);
   font-weight: 200;
   color: #475569;
   margin-top: 0.5rem;
 }
 
 .description {
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
   color: #64748b;
   font-weight: 300;
   line-height: 1.6;
@@ -123,23 +117,21 @@ body {
 
 .start-button {
   margin-top: 1rem;
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
-  color: #334155;
-  font-weight: 300;
-  border-radius: 1rem;
-  box-shadow: 0 10px 20px rgba(147, 197, 253, 0.2);
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
+  font-size: clamp(0.95rem, 2.2vw, 1.125rem);
+  color: #0f172a;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 .start-button:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(147, 197, 253, 0.3);
+  background-color: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.15);
 }
 
 .button-content {
@@ -161,9 +153,9 @@ body {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  font-size: 0.875rem;
-  margin-top: 2rem;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  font-size: clamp(0.8rem, 2vw, 0.95rem);
+  margin-top: clamp(1rem, 3vw, 2rem);
   color: #94a3b8;
 }
 
@@ -179,7 +171,6 @@ body {
   content: '';
   width: 0.5rem;
   height: 0.5rem;
-  border-radius: 50%;
   position: absolute;
   left: 0;
   top: 50%;
@@ -222,15 +213,9 @@ body {
   .hide-on-mobile {
     display: inline;
   }
-  .title {
-    font-size: 3rem;
-  }
-  .subtitle {
-    font-size: 2.5rem;
-  }
-  .description {
-    font-size: 1.5rem;
-  }
+  .title { font-size: clamp(2.75rem, 5vw, 3.25rem); }
+  .subtitle { font-size: clamp(1.5rem, 3.5vw, 2.25rem); }
+  .description { font-size: clamp(1.05rem, 2.2vw, 1.25rem); }
 }
 
 .hide-on-mobile {

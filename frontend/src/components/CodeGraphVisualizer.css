@@ -1,33 +1,41 @@
 /* ============================= */
 /* CodeGraphVisualizer.css       */
+/* Ultra Clean & Responsive      */
 /* ============================= */
+
+* {
+  box-sizing: border-box;
+}
 
 /* Container for the whole visualizer section */
 .visualizer-section {
   width: 100%;
-  height: 100%;
-  margin-top: 24px;
-  background: #0f172a;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  color: #e2e8f0;
-  transition: all 0.4s ease;
+  max-width: 100%;
+  margin: clamp(16px, 4vw, 32px) auto;
+  padding: clamp(16px, 3vw, 24px);
+  background: #ffffff;
+  border-radius: 0;
+  border: 3px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: block;
+  position: relative;
 }
 
 /* Hide/Show transitions */
 .visualizer-section.hide {
   opacity: 0;
   pointer-events: none;
-  transform: translateY(10px);
-  transition: all 0.35s ease;
+  transform: translateY(20px) scale(0.98);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .visualizer-section.show {
   opacity: 1;
-  transform: translateY(0);
-  transition: all 0.35s ease;
+  pointer-events: all;
+  transform: translateY(0) scale(1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Header with toggle button */
@@ -35,30 +43,78 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  color: #fff;
+  margin-bottom: clamp(16px, 3vw, 24px);
+  padding-bottom: clamp(12px, 2vw, 16px);
+  border-bottom: 3px solid #e2e8f0;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .visualizer-header h2 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #f1f5f9;
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+  margin: 0;
+  line-height: 1.2;
+  position: relative;
+  padding-left: 12px;
+}
+
+.visualizer-header h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 80%;
+  background: #3b82f6;
 }
 
 /* Toggle button styling */
 .toggle-btn {
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 14px;
+  background: #0f172a;
+  color: #ffffff;
+  border: 2px solid #0f172a;
+  border-radius: 0;
+  padding: clamp(10px, 2vw, 14px) clamp(16px, 3vw, 24px);
   cursor: pointer;
-  font-weight: 500;
-  transition: 0.2s ease;
+  font-weight: 700;
+  font-size: clamp(12px, 2vw, 14px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.toggle-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #3b82f6;
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.toggle-btn:hover::before {
+  left: 0;
 }
 
 .toggle-btn:hover {
-  background: #1e40af;
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.toggle-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
 }
 
 /* Placeholder shown when no data */
@@ -67,23 +123,45 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #94a3b8;
-  font-size: 1rem;
-  background: #1e293b;
-  border-radius: 10px;
+  min-height: 400px;
+  color: #64748b;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  font-weight: 600;
+  background: #f8fafc;
+  border-radius: 0;
+  border: 2px dashed #cbd5e1;
   text-align: center;
-  padding: 20px;
+  padding: clamp(20px, 4vw, 40px);
 }
 
 /* Container for the graph (2D or 3D) */
 .visualizer-container {
   width: 100%;
-  height: 80vh;
-  background-color: #000; /* Black background for 2D & 3D */
-  border-radius: 12px;
+  max-width: 100%;
+  height: clamp(500px, 70vh, 850px);
+  background-color: #0a0e1a;
+  border-radius: 0;
   overflow: hidden;
   position: relative;
-  transition: background 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 3px solid #1e293b;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.visualizer-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 /* Ensure canvas and SVG take full space */
@@ -91,58 +169,149 @@
 .visualizer-container svg {
   width: 100% !important;
   height: 100% !important;
+  display: block;
 }
 
 /* Tooltip box for node hover */
 .tooltip-box {
   position: fixed;
-  background: rgba(20, 20, 20, 0.95);
-  color: #fff;
-  border: 1px solid #444;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 13px;
+  background: rgba(15, 23, 42, 0.98);
+  color: #ffffff;
+  border: 2px solid #3b82f6;
+  border-radius: 0;
+  padding: clamp(12px, 2vw, 16px);
+  font-size: clamp(12px, 1.5vw, 14px);
   pointer-events: none;
-  z-index: 1000;
-  max-width: 280px;
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+  z-index: 9999;
+  max-width: clamp(250px, 40vw, 320px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  line-height: 1.6;
 }
 
 .tooltip-box h4 {
-  font-size: 14px;
-  margin: 0 0 5px;
-  color: #38bdf8;
+  font-size: clamp(13px, 2vw, 16px);
+  margin: 0 0 8px;
+  color: #60a5fa;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #60a5fa;
+  padding-bottom: 6px;
+}
+
+.tooltip-box p {
+  margin: 6px 0;
+  font-size: clamp(11px, 1.5vw, 13px);
+  line-height: 1.5;
+}
+
+.tooltip-box strong {
+  color: #93c5fd;
+  font-weight: 600;
 }
 
 .tooltip-box ul {
-  padding-left: 15px;
-  margin: 5px 0 0;
+  padding-left: 16px;
+  margin: 8px 0 0;
 }
 
 .tooltip-box li {
   list-style: disc;
-  margin: 0;
-  font-size: 12px;
+  margin: 4px 0;
+  font-size: clamp(11px, 1.5vw, 13px);
 }
 
-/* Smooth hover effect on nodes (optional) */
+/* Smooth hover effect on nodes */
 .force-graph-container circle {
-  transition: r 0.2s ease, fill 0.2s ease;
+  transition: r 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              fill 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* CodeGraphVisualizer.css */
-.visualizer-section { width:100%; height:100%; display:block; }
-.visualizer-section.hide { opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.35s ease; }
-.visualizer-section.show { opacity: 1; transform: translateY(0); transition: all 0.35s ease; }
+/* ============================= */
+/* Responsive Design             */
+/* ============================= */
 
-.visualizer-container {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,255,0.9));
+/* Tablets */
+@media (max-width: 1024px) {
+  .visualizer-section {
+    padding: clamp(12px, 2vw, 20px);
+    margin: clamp(12px, 3vw, 24px) auto;
+  }
+  
+  .visualizer-container {
+    height: clamp(450px, 60vh, 700px);
+  }
 }
-.visualizer-container canvas, .visualizer-container svg {
-  width: 100% !important;
-  height: 100% !important;
+
+/* Mobile Devices */
+@media (max-width: 768px) {
+  .visualizer-section {
+    padding: 12px;
+    margin: 12px auto;
+    border-width: 2px;
+  }
+  
+  .visualizer-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+  
+  .visualizer-header h2 {
+    font-size: 1.25rem;
+    padding-left: 10px;
+  }
+  
+  .toggle-btn {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  
+  .visualizer-container {
+    height: clamp(400px, 55vh, 600px);
+    border-width: 2px;
+  }
+  
+  .tooltip-box {
+    max-width: 90vw;
+    font-size: 12px;
+    padding: 10px;
+  }
 }
-.visualizer-placeholder { display:flex; align-items:center; justify-content:center; height:100%; color:#64748b; }
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .visualizer-section {
+    margin: 8px;
+    padding: 10px;
+  }
+  
+  .visualizer-header h2 {
+    font-size: 1.1rem;
+  }
+  
+  .visualizer-container {
+    height: clamp(350px, 50vh, 500px);
+  }
+  
+  .toggle-btn {
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+}
+
+/* Large Screens */
+@media (min-width: 1920px) {
+  .visualizer-section {
+    max-width: 1800px;
+  }
+  
+  .visualizer-container {
+    height: clamp(700px, 70vh, 1000px);
+  }
+}
 
