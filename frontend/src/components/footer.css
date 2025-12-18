@@ -1,0 +1,245 @@
+/* ===========================
+   Footer Styles - Black & White
+   =========================== */
+
+.footer {
+  background: #000;
+  color: #fff;
+  padding: clamp(3rem, 6vw, 4rem) 0 clamp(1.5rem, 3vw, 2rem);
+  position: relative;
+  width: 100%;
+}
+
+.footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+}
+
+/* Top Section - Grid Layout */
+.footer-top {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+/* Logo Section */
+.logo-section {
+  grid-column: span 1;
+}
+
+.footer-logo {
+  margin-bottom: 1rem;
+}
+
+.logo-image {
+  width: auto;
+  height: 80px;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-placeholder {
+  width: 60px;
+  height: 60px;
+  background: #fff;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  border-radius: 0;
+  letter-spacing: -0.05em;
+}
+
+.footer-tagline {
+  color: #cbd5e1;
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 280px;
+}
+
+/* Footer Sections */
+.footer-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-heading {
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links li a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  transition: color 0.3s ease;
+  display: inline-block;
+}
+
+.footer-links li a:hover {
+  color: #fff;
+  padding-left: 4px;
+  transition: all 0.3s ease;
+}
+
+/* Team List */
+.footer-team {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-team li {
+  color: #cbd5e1;
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  margin-bottom: 0.75rem;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.footer-team li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #fff;
+}
+
+/* Bottom Section */
+.footer-divider {
+  height: 1px;
+  background: #333;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.footer-bottom-content {
+  text-align: center;
+}
+
+.footer-copyright {
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  color: #cbd5e1;
+  margin: 0 0 0.5rem 0;
+}
+
+.footer-subtitle {
+  font-size: clamp(0.8rem, 1.6vw, 0.875rem);
+  color: #64748b;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+  border-radius: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  animation: fadeInUp 0.3s ease;
+}
+
+.back-to-top:hover {
+  background: #000;
+  color: #fff;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.arrow-up {
+  font-weight: 700;
+  line-height: 1;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer {
+    padding: clamp(2rem, 5vw, 3rem) 0 clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .logo-section {
+    grid-column: span 1;
+  }
+
+  .footer-tagline {
+    max-width: 100%;
+  }
+
+  .back-to-top {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 45px;
+    height: 45px;
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-top {
+    gap: 2rem;
+  }
+
+  .footer-heading {
+    font-size: 1rem;
+  }
+
+  .back-to-top {
+    bottom: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.125rem;
+  }
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}

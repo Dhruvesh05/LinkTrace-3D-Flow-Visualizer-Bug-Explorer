@@ -1,3 +1,26 @@
+/* About Section Navbar Logo */
+.about-nav-logo {
+  height: 44px;
+  width: auto;
+  cursor: pointer;
+  margin-right: 1.5rem;
+  transition: transform 0.3s;
+}
+.about-nav-logo:hover {
+  transform: scale(1.05);
+}
+@media (max-width: 768px) {
+  .about-nav-logo {
+    height: 36px;
+    margin-right: 1rem;
+  }
+}
+@media (max-width: 480px) {
+  .about-nav-logo {
+    height: 28px;
+    margin-right: 0.5rem;
+  }
+}
 /* ===========================
    🌐 About Section - Minimalist Design
    =========================== */
@@ -257,7 +280,7 @@
 .tagline h1 {
   font-size: clamp(1rem, 2.5vw, 1.25rem);
   font-weight: 600;
-  color: #64748b;
+  color: #000 !important;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -272,16 +295,16 @@
   line-height: 1.1;
   margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
-  color: #0f172a;
+  color: #000 !important;
 }
 
 .gradient-text {
-  color: #3b82f6;
+  color: #000 !important;
 }
 
 .description {
   font-size: clamp(1rem, 2.2vw, 1.25rem);
-  color: #475569;
+  color: #000 !important;
   max-width: 800px;
   margin: 0 auto;
   line-height: 1.8;
@@ -552,28 +575,28 @@
 }
 
 .btn.primary {
-  background: #3b82f6;
-  color: #ffffff;
-  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.25);
+  background: #ffffff !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  box-shadow: none;
 }
 
 .btn.primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
-  background: #2563eb;
+  background: #000 !important;
+  color: #fff !important;
 }
 
 .btn.secondary {
-  background: transparent;
-  color: #3b82f6;
-  border-color: #3b82f6;
+  background: #ffffff !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
 }
 
 .btn.secondary:hover {
-  background: rgba(59, 130, 246, 0.08);
+  background: #000 !important;
+  color: #fff !important;
   transform: translateY(-2px);
-  border-color: #2563eb;
-  color: #2563eb;
 }
 
 /* ===========================
@@ -765,4 +788,19 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ===========================
+   🖤 Force All Text Black (Scoped)
+   =========================== */
+/* Apply black text color to all elements within About section */
+.about-wrapper, .about-wrapper * {
+  color: #000 !important;
+}
+
+/* Ensure any gradient/text-fill styles don’t override black */
+.about-wrapper .gradient-text {
+  background: none !important;
+  -webkit-text-fill-color: #000 !important;
+  color: #000 !important;
 }

@@ -14,8 +14,7 @@ export default function Home() {
       <div className="home-content">
         <div className="fade-in">
           <h1 className="title">
-            Code Connectivity
-            <span className="subtitle">Visualizer</span>
+            Code Connectivity <span className="title" style={{ display: 'block' }}>Visualizer</span>
           </h1>
         </div>
 

@@ -86,7 +86,15 @@ function AboutSection() {
     <div className="about-wrapper">
       {/* Navigation */}
       <nav className="navbar">
-        <div className="container">
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Logo on the left */}
+          <img
+            src="/logo.png"
+            alt="LinkTrace Logo"
+            className="about-nav-logo"
+            style={{ height: '44px', width: 'auto', cursor: 'pointer', marginRight: '1.5rem' }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          />
           <div className="nav-items">
             {navItems.map(item => (
               <a
@@ -102,14 +110,12 @@ function AboutSection() {
               </a>
             ))}
           </div>
-          
           {/* Hamburger Menu */}
           <div className="hamburger" onClick={toggleMenu}>
             <span style={{ transform: isMenuOpen ? 'rotate(45deg) translate(6px, 6px)' : 'none' }}></span>
             <span style={{ opacity: isMenuOpen ? '0' : '1' }}></span>
             <span style={{ transform: isMenuOpen ? 'rotate(-45deg) translate(6px, -6px)' : 'none' }}></span>
           </div>
-
           {/* Mobile Menu */}
           <div className={`nav-menu-mobile ${isMenuOpen ? 'active' : ''}`}>
             {navItems.map(item => (
@@ -136,14 +142,12 @@ function AboutSection() {
           <div id="about" className={`section ${isVisible ? 'fade-in' : 'hidden'}`}>
             <div className="tagline">
               <h1>
-                <span className="emoji">🚀</span>
+                <span className="emoji"></span>
                 <span>About Our Project</span>
               </h1>
             </div>
-            <h1 className="headline">
-              Code Connectivity
-              <span className="gradient-text"> Visualizer</span>
-            </h1>
+            <h1 className="headline"> Code Connectivity</h1>
+            <h1 className="headline"> Visualizer</h1>
             <p className="description">
               Transforming complex codebases into beautiful, interactive 3D visualizations that reveal 
               hidden connections and identify potential issues with unprecedented clarity.
