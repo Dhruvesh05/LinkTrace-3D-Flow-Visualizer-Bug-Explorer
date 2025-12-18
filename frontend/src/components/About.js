@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
+import Image from 'next/image';
 import './AboutSection.css';
 
 function AboutSection() {
@@ -88,12 +90,15 @@ function AboutSection() {
       <nav className="navbar">
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo on the left */}
-          <img
+          <Image
             src="/logo.png"
             alt="LinkTrace Logo"
             className="about-nav-logo"
+            width={44}
+            height={44}
             style={{ height: '44px', width: 'auto', cursor: 'pointer', marginRight: '1.5rem' }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            priority
           />
           <div className="nav-items">
             {navItems.map(item => (

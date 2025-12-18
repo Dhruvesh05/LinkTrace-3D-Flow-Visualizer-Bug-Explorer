@@ -1,4 +1,6 @@
+
 'use client';
+import Image from 'next/image';
 
 export default function Navbar() {
   const handleLogoClick = () => {
@@ -7,11 +9,14 @@ export default function Navbar() {
 
   return (
     <nav>
-      <img 
-        src="/logo.png" 
-        alt="LinkTrace Logo" 
-        className="nav-logo" 
+      <Image
+        src="/logo.png"
+        alt="LinkTrace Logo"
+        className="nav-logo"
+        width={44}
+        height={44}
         onClick={handleLogoClick}
+        priority
       />
       <div className="nav-links">
         <a href="#home">Home</a>

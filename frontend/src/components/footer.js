@@ -1,6 +1,8 @@
 'use client';
 
+
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import './footer.css';
 
 function Footer() {
@@ -42,7 +44,7 @@ function Footer() {
           {/* Logo Section */}
           <div className="footer-section logo-section">
             <div className="footer-logo">
-              <img src="/logo.png" alt="LinkTrace Logo" className="logo-image" />
+              <Image src="/logo.png" alt="LinkTrace Logo" className="logo-image" width={80} height={80} priority />
             </div>
             <p className="footer-tagline">
               Visualize • Debug • Navigate
