@@ -34,8 +34,8 @@
 }
 
 .logo-image {
-  width: auto;
   height: 80px;
+  width: auto;
   max-width: 100%;
   object-fit: contain;
   display: block;
@@ -51,7 +51,6 @@
   justify-content: center;
   font-weight: 700;
   font-size: 1.25rem;
-  border-radius: 0;
   letter-spacing: -0.05em;
 }
 
@@ -72,52 +71,44 @@
 .footer-heading {
   font-size: clamp(1rem, 2vw, 1.125rem);
   font-weight: 600;
-  color: #fff;
   margin-bottom: 1rem;
   letter-spacing: 0.02em;
 }
 
-.footer-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer-links li {
-  margin-bottom: 0.75rem;
-}
-
-.footer-links li a {
-  color: #cbd5e1;
-  text-decoration: none;
-  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
-  transition: color 0.3s ease;
-  display: inline-block;
-}
-
-.footer-links li a:hover {
-  color: #fff;
-  padding-left: 4px;
-  transition: all 0.3s ease;
-}
-
-/* Team List */
+.footer-links,
 .footer-team {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
+.footer-links li,
+.footer-team li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: clamp(0.875rem, 1.8vw, 0.95rem);
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #fff;
+  padding-left: 4px;
+}
+
+/* Team List */
 .footer-team li {
   color: #cbd5e1;
   font-size: clamp(0.875rem, 1.8vw, 0.95rem);
-  margin-bottom: 0.75rem;
-  position: relative;
   padding-left: 1rem;
+  position: relative;
 }
 
 .footer-team li::before {
-  content: '•';
+  content: "•";
   position: absolute;
   left: 0;
   color: #fff;
@@ -138,17 +129,20 @@
 .footer-copyright {
   font-size: clamp(0.875rem, 1.8vw, 0.95rem);
   color: #cbd5e1;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem;
 }
 
 .footer-subtitle {
   font-size: clamp(0.8rem, 1.6vw, 0.875rem);
   color: #64748b;
-  margin: 0;
   font-style: italic;
+  margin: 0;
 }
 
-/* Back to Top Button */
+/* ===========================
+   Back to Top Button (FIXED)
+   =========================== */
+
 .back-to-top {
   position: fixed;
   bottom: 2rem;
@@ -158,7 +152,7 @@
   background: #fff;
   color: #000;
   border: 2px solid #000;
-  border-radius: 0;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -182,6 +176,7 @@
   line-height: 1;
 }
 
+/* Animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -193,7 +188,10 @@
   }
 }
 
-/* Responsive Design */
+/* ===========================
+   Responsive Design
+   =========================== */
+
 @media (max-width: 768px) {
   .footer {
     padding: clamp(2rem, 5vw, 3rem) 0 clamp(1rem, 2vw, 1.5rem);
@@ -202,10 +200,6 @@
   .footer-top {
     grid-template-columns: 1fr;
     gap: 2.5rem;
-  }
-
-  .logo-section {
-    grid-column: span 1;
   }
 
   .footer-tagline {
